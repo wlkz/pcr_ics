@@ -27,9 +27,9 @@ BASE_URL = 'https://redive.estertion.win'
 CN_VERSION_URL = f'{BASE_URL}/last_version_cn.json'
 CN_DATABASE_URL = f'{BASE_URL}/db/redive_cn.db.br'
 
-now = datetime.now()
-CN_SERVER_RELEASED_TIME = pytz.timezone(
-    'Asia/Shanghai').localize(datetime(2020, 4, 17, 11))
+cn_timezone =pytz.timezone('Asia/Shanghai')
+now = cn_timezone.localize(datetime.now())
+CN_SERVER_RELEASED_TIME = cn_timezone.localize(datetime(2020, 4, 17, 11))
 
 
 class EventSerializer(_EventSerializer):
@@ -172,8 +172,8 @@ class Query:
     def event_builder(self, row: Union[sqlite3.Row, tuple]):
         rid, start_time, end_time = row[:3]
 
-        start_time = datetime.strptime(start_time, '%Y/%m/%d %H:%M:%S')
-        end_time = datetime.strptime(end_time, '%Y/%m/%d %H:%M:%S')
+        start_time =  cn_timezone.localize(datetime.strptime(start_time, '%Y/%m/%d %H:%M:%S'))
+        end_time = cn_timezone.localize(datetime.strptime(end_time, '%Y/%m/%d %H:%M:%S'))
 
         event_name = self.get_event_name(row)
         uid = str(uuid_generator(self.get_url(rid)))
