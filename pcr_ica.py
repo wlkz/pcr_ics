@@ -9,6 +9,7 @@ from sqlite3 import Connection
 from typing import Union
 
 import brotli
+import pytz
 import requests
 from ics import Calendar, Event as _Event
 from ics.grammar.parse import ContentLine
@@ -22,6 +23,8 @@ CN_VERSION_URL = f'{BASE_URL}/last_version_cn.json'
 CN_DATABASE_URL = f'{BASE_URL}/db/redive_cn.db.br'
 
 now = datetime.now()
+CN_SERVER_RELEASED_TIME = pytz.timezone(
+    'Asia/Shanghai').localize(datetime(2020, 4, 17, 11))
 
 
 class EventSerializer(_EventSerializer):
@@ -246,7 +249,10 @@ if __name__ == "__main__":
         for q in querys:
             for e in q.iter_event(con):
                 if e.name == 'skip':
+                if e.name == 'skip' or e.end < CN_SERVER_RELEASED_TIME:
                     continue
+                if e.begin < CN_SERVER_RELEASED_TIME:
+                    e.begin = CN_SERVER_RELEASED_TIME
                 old_event = uid2events.get(e.uid)
                 if old_event:
                     update_event(old_event, e)
