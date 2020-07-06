@@ -1,10 +1,10 @@
-# pcr_ica
+# pcr_ics
 
 ![banner](docs/banner.png)
 
 一个根据[干炸里脊资源站](https://redive.estertion.win)数据制作的公主连接活动 iCalendar 日程表。
 
-发布地址：[webcal://wlkz.github.io/pcr_ica/dist/pcr_cn.ics](webcal://wlkz.github.io/pcr_ica/dist/pcr_cn.ics)
+发布地址：[webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics](webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics)
 
 ## 使用方法
 
@@ -16,7 +16,7 @@
 
 ### iOS 用户
   
-直接点击 [webcal://wlkz.github.io/pcr_ica/dist/pcr_cn.ics](webcal://wlkz.github.io/pcr_ica/dist/pcr_cn.ics) 即可。
+直接点击 [webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics](webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics) 即可。
 
 ### Outlook 用户
 
