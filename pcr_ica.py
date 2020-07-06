@@ -11,10 +11,15 @@ from typing import Union
 import brotli
 import pytz
 import requests
-from ics import Calendar, Event as _Event
+from ics import Calendar as _Calendar
+from ics import Event as _Event
 from ics.grammar.parse import ContentLine
-from ics.serializers.event_serializer import EventSerializer as _EventSerializer
 from ics.parsers.event_parser import EventParser as _EventParser
+from ics.parsers.icalendar_parser import CalendarParser as _CalendarParser
+from ics.parsers.parser import option
+from ics.serializers.event_serializer import \
+    EventSerializer as _EventSerializer
+from ics.serializers.icalendar_serializer import CalendarSerializer
 from ics.utils import arrow_to_iso
 
 BASE_URL = 'https://redive.estertion.win'
@@ -40,10 +45,31 @@ class EventSerializer(_EventSerializer):
         if not event.sequence is None:
             container.append(ContentLine("SEQUENCE", value=event.sequence))
 
+
 class EventParser(_EventParser):
     def parse_sequence(event, line):
         if line:
-            event.sequence = int(line)
+            event.sequence = int(line.value)
+
+
+class CalendarParser(_CalendarParser):
+    """hook CalendarParser to replace event builder to hooded version
+    """
+    @option(multiple=True)
+    def parse_vevent(calendar, lines):
+        # tz=calendar._timezones gives access to the event factory to the
+        # timezones list
+        def event_factory(x):
+            return Event._from_container(x, tz=calendar._timezones)
+
+        calendar.events = set(map(event_factory, lines))
+
+
+class Calendar(_Calendar):
+    class Meta:
+        name = 'VCALENDAR'
+        parser = CalendarParser
+        serializer = CalendarSerializer
 
 
 class Event(_Event):
@@ -74,7 +100,9 @@ def download(url, dst='.', name=None, decompress=False):
         decompresser.finish()
     return dst
 
+
 DB_PATH = Path('./db')
+
 
 class Database:
     def __init__(self):
@@ -98,7 +126,8 @@ class Database:
             need_update = True
 
         if need_update:
-            db_path = download(CN_DATABASE_URL, DB_PATH, name='cn.db', decompress=True)
+            db_path = download(CN_DATABASE_URL, DB_PATH,
+                               name='cn.db', decompress=True)
             self.db_path = db_path
         shutil.move(latest_version_path, local_version_path)
 
@@ -225,6 +254,7 @@ def add_modified_message(event: Event):
 def update_event(old_event: Event, new_event: Event):
     new_event.created = old_event.created
     new_event.last_modified = old_event.last_modified
+    new_event.sequence = old_event.sequence
 
     if new_event != old_event:
         new_event.last_modified = now
@@ -241,14 +271,14 @@ if __name__ == "__main__":
         c.creator = 'wlkz. Powered by ics.py - http://git.io/lLljaA'
         c.extra.append(ContentLine('METHOD', value='PUBLISH'))
         c.extra.append(ContentLine('X-WR-CALNAME', value='公主连接国服活动日历'))
-        c.extra.append(ContentLine('X-WR-CALDESC', value='公主连接国服活动日历，数据来自干炸里脊资料站'))
+        c.extra.append(ContentLine(
+            'X-WR-CALDESC', value='公主连接国服活动日历，数据来自干炸里脊资料站'))
     db = Database()
     # db.update()
     uid2events = {e.uid: e for e in c.events}
     with db as con:
         for q in querys:
             for e in q.iter_event(con):
-                if e.name == 'skip':
                 if e.name == 'skip' or e.end < CN_SERVER_RELEASED_TIME:
                     continue
                 if e.begin < CN_SERVER_RELEASED_TIME:
