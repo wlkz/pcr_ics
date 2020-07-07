@@ -2,7 +2,7 @@
 
 ![banner](docs/banner.png)
 
-一个根据[干炸里脊资源站](https://redive.estertion.win)数据制作的公主连接活动 iCalendar 日程表。
+一个根据[干炸里脊资源站](https://redive.estertion.win)数据制作的公主连结 Re:dive 活动 iCalendar 日程表。
 
 发布地址：[webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics](webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics)
 
