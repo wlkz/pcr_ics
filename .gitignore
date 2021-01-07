@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 .vscode
+deploy/dist/pcr_cn.ics

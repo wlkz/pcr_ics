@@ -1,0 +1,58 @@
+name: Update
+
+on:
+  schedule:
+    - cron:  '0 */6 * * *'
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: main
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        # This path is specific to Ubuntu
+        path: ~/.cache/pip
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+    - name: Install dependencies
+      run: |
+          pip install -r requirements.txt
+    - name: Check update & export ics file
+      id: check_update_and_export
+      run: |
+        python pcr_ics.py
+    - name: Debug
+      run: |
+        echo "${{ steps.check_update_and_export.outputs.PCR_ICS_NEED_UPDATE == 'true' }}"
+        echo "${{ steps.check_update_and_export.outputs.PCR_ICS_NEED_UPDATE }}"
+        echo "${{ steps.check_update_and_export.outputs.PCR_ICS_COMMIT }}"
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      if:
+        ${{ steps.check_update_and_export.outputs.PCR_ICS_NEED_UPDATE == 'true' }}
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: deploy # The branch the action should deploy to.
+        FOLDER: deploy # The folder the action should deploy.
+        CLEAN: true # Automatically remove deleted files from the deploy branch
+        COMMIT_MESSAGE: ${{ steps.check_update_and_export.outputs.PCR_ICS_COMMIT }}
+    # - name: Sync to Gitee
+    #   uses: repo-sync/github-sync@v2
+    #   with: 
