@@ -1,9 +1,3 @@
-# pcr_ics
+# pcr_ics deploy branch
 
-[中文 README](README_zh.md)
-
-![banner](docs/banner.png)
-
-A iCalendar generator for Princess Connect! Re:Dive (公主连结Re:Dive), based on [干炸里脊资源站](https://redive.estertion.win).
-
-[webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics](webcal://wlkz.github.io/pcr_ics/dist/pcr_cn.ics)
+This is the deployment branch(master) for pcr_ics. For more details, please switch to main branch.
