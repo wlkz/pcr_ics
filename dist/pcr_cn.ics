@@ -1,10 +1,11 @@
 BEGIN:VCALENDAR
+CALSCALE:GREGORIAN
 X-PCR-ICS-DB-VERSION:202101071442
-X-WR-CALDESC:公主连接国服活动日历，数据来自干炸里脊资料站
+X-WR-CALDESC:公主连接国服活动日历，由pcr_ics（https://git.io/JLhLb）生成，数据来自干炸里脊资料站
 X-WR-CALNAME:公主连接国服活动日历
+X-WR-TIMEZONE:Asia/Shanghai
 VERSION:2.0
-PRODID:wlkz. Powered by ics.py - http://git.io/lLljaA
-CALSCALE:GEORGIAN
+PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
 CREATED:20201214T064536Z
 DTSTAMP:20210110T061355Z
