@@ -548,7 +548,10 @@ def main(ref_calendar_path, target):
         if db.latest_version == calendar_db_version:
             LOGGER.info(f'calendar is up to date')
             if IS_GITHUB_ACTIONS:
-                set_output('PCR_ICS_NEED_UPDATE', 'false')
+                github_sha = os.environ.get('GITHUB_SHA')
+                set_output('PCR_ICS_COMMIT',
+                   f'deploy: trigged update from @{github_sha} (github_actions)'
+                   )
             return
         db.download_latest()
     except requests.exceptions.RequestException as ex:
@@ -566,7 +569,6 @@ def main(ref_calendar_path, target):
     LOGGER.info(f'target {target} is saved!')
 
     if IS_GITHUB_ACTIONS:
-        set_output('PCR_ICS_NEED_UPDATE', 'true')
         set_output('PCR_ICS_COMMIT',
                    f'deploy: bump ics file to version {db.latest_version} (github_actions)'
                    )
