@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     
 jobs:
-  update:
+  update_ics_file:
     runs-on: ubuntu-latest
 
     steps:
@@ -46,6 +46,13 @@ jobs:
         FOLDER: deploy # The folder the action should deploy.
         CLEAN: true # Automatically remove deleted files from the deploy branch
         COMMIT_MESSAGE: ${{ steps.check_update_and_export.outputs.PCR_ICS_COMMIT }}
-    # - name: Sync to Gitee
-    #   uses: repo-sync/github-sync@v2
-    #   with: 
+  sync_to_gitee:
+    runs-on: ubuntu-latest
+    needs: update_ics_file
+    steps:
+      - uses: wearerequired/git-mirror-action@v1
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
+        with:
+          source-repo: 'git@github.com:wlkz/pcr_ics.git'
+          destination-repo: 'git@gitee.com:wlkz/pcr_ics.git'
