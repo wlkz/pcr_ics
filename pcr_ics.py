@@ -415,6 +415,32 @@ class HatsuneQuery(Query):
         title = row[3]
         return f'剧情活动：{title}'
 
+class CharaFortuneQuery(Query):
+    table_name = 'chara_fortune_schedule'
+    id_field = 'fortune_id'
+
+    @property
+    def query_str(self):
+        return '''
+        SELECT fortune_id, start_time, end_time, name
+        FROM chara_fortune_schedule
+        '''
+    
+    def iter_row(self, con):
+        for row in super().iter_row(con):
+            start_time, end_time = row[1:3]
+            # 2020/7/11 5:00 -> 2020/7/11 5:00:00
+            start_time = f'{start_time}:00'
+            # 2020/7/25 4:59 -> 2020/7/25 4:59:59
+            end_time = f'{end_time}:59'
+
+            yield row[0], start_time, end_time, row[3]
+    
+    def get_event_name(self, row: Union[sqlite3.Row, tuple]) -> str:
+        name = row[3]
+        # 第1届 兰德索尔杯
+        return name
+
 
 querys = [v() for name, v in globals().items()
           if name.endswith('Query') and name != 'Query']
