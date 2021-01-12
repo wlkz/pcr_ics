@@ -549,8 +549,12 @@ def main(ref_calendar_path, target):
             LOGGER.info(f'calendar is up to date')
             if IS_GITHUB_ACTIONS:
                 github_sha = os.environ.get('GITHUB_SHA')
+                if github_sha:
+                    sha_str = f'from {github_sha} '
+                else:
+                    sha_str = ''
                 set_output('PCR_ICS_COMMIT',
-                   f'deploy: trigged update from @{github_sha} (github_actions)'
+                   f'deploy: triggered update {sha_str}(github_actions)'
                    )
             return
         db.download_latest()
