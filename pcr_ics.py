@@ -429,10 +429,13 @@ class CharaFortuneQuery(Query):
     def iter_row(self, con):
         for row in super().iter_row(con):
             start_time, end_time = row[1:3]
-            # 2020/7/11 5:00 -> 2020/7/11 5:00:00
-            start_time = f'{start_time}:00'
-            # 2020/7/25 4:59 -> 2020/7/25 4:59:59
-            end_time = f'{end_time}:59'
+
+            # polyfill for old version (calendar_db_version < 202101211454) chara_fortune_schedule time str
+            if len(start_time.split()[1]) <= len("05:00"):
+                # 2020/7/11 5:00 -> 2020/7/11 5:00:00
+                start_time = f'{start_time}:00'
+                # 2020/7/25 4:59 -> 2020/7/25 4:59:59
+                end_time = f'{end_time}:59'
 
             yield row[0], start_time, end_time, row[3]
     
