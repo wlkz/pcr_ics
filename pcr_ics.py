@@ -321,6 +321,7 @@ class FreeGachaQuery(Query):
         return '''
         SELECT id, start_time, end_time, freegacha_1, freegacha_10
         FROM campaign_freegacha
+        WHERE freegacha_10 == 1 OR freegacha_1 == 1
         '''
 
     def get_event_name(self, row: Union[sqlite3.Row, tuple]) -> str:
