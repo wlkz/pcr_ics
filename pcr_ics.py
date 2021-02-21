@@ -521,7 +521,7 @@ class SortedSet(set):
 
 
 def prettify_calendar(calendar):
-    calendar.events = SortedSet(calendar.events, key=lambda x: x.begin)
+    calendar.events = SortedSet(calendar.events, key=lambda x: (x.begin, x.end, x.name))
     calendar.extra.sort(key=lambda x: x.name)
     return calendar
 
