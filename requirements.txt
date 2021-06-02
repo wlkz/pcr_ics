@@ -1,3 +1,4 @@
 ics==0.7
 pytz==2020.1
 requests
+brotlipy==0.7.0
